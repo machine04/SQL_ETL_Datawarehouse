@@ -1,12 +1,15 @@
+-- 🔄 Stored Procedure: Bronze Layer Loader
+-- This procedure automates bulk loading of raw CRM and ERP data into the Bronze layer tables.
+-- Includes load tracking, error handling, and timing metrics for each operation.
+
 CREATE PROCEDURE Bronze.load_bronze
 AS
 BEGIN
-DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
-
+    DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
     DECLARE @start_time DATETIME, @end_time DATETIME;
 
     BEGIN TRY
-    SET @bronze_start_time = GETDATE();
+        SET @bronze_start_time = GETDATE();
         PRINT '================================================';
         PRINT 'Loading bronze layer';
         PRINT '================================================';
@@ -21,7 +24,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.crm_cust_info;
         PRINT 'Inserting data into: Bronze.crm_cust_info';
         BULK INSERT Bronze.crm_cust_info
-        FROM 'C:\Data\source_crm\cust_info.csv'
+        FROM '<YourFilePathHere>\cust_info.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -36,7 +39,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.crm_prd_info;
         PRINT 'Inserting data into: Bronze.crm_prd_info';
         BULK INSERT Bronze.crm_prd_info
-        FROM 'C:\Data\source_crm\prd_info.csv'
+        FROM '<YourFilePathHere>\prd_info.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -51,7 +54,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.crm_sales_details;
         PRINT 'Inserting data into: Bronze.crm_sales_details';
         BULK INSERT Bronze.crm_sales_details
-        FROM 'C:\Data\source_crm\sales_details.csv'
+        FROM '<YourFilePathHere>\sales_details.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -70,7 +73,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.erp_cust_az12;
         PRINT 'Inserting data into: Bronze.erp_cust_az12';
         BULK INSERT Bronze.erp_cust_az12
-        FROM 'C:\Data\source_erp\CUST_AZ12.csv'
+        FROM '<YourFilePathHere>\CUST_AZ12.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -85,7 +88,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.erp_loc_a101;
         PRINT 'Inserting data into: Bronze.erp_loc_a101';
         BULK INSERT Bronze.erp_loc_a101
-        FROM 'C:\Data\source_erp\LOC_A101.csv'
+        FROM '<YourFilePathHere>\LOC_A101.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -100,7 +103,7 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         TRUNCATE TABLE Bronze.erp_px_cat_g1v2;
         PRINT 'Inserting data into: Bronze.erp_px_cat_g1v2';
         BULK INSERT Bronze.erp_px_cat_g1v2
-        FROM 'C:\Data\source_erp\PX_CAT_G1V2.csv'
+        FROM '<YourFilePathHere>\PX_CAT_G1V2.csv'
         WITH (
             FIRSTROW = 2,
             FIELDTERMINATOR = ',',
@@ -108,11 +111,12 @@ DECLARE @bronze_start_time DATETIME, @bronze_end_time DATETIME;
         );
         SET @end_time = GETDATE();
         PRINT '>> Load duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR(50)) + ' seconds';
+
         SET @bronze_end_time = GETDATE();
-PRINT '================================================';
-PRINT 'Total Bronze Layer Load Duration: ' + 
-      CAST(DATEDIFF(SECOND, @bronze_start_time, @bronze_end_time) AS NVARCHAR(50)) + ' seconds';
-PRINT '================================================';
+        PRINT '================================================';
+        PRINT 'Total Bronze Layer Load Duration: ' +
+              CAST(DATEDIFF(SECOND, @bronze_start_time, @bronze_end_time) AS NVARCHAR(50)) + ' seconds';
+        PRINT '================================================';
     END TRY
     BEGIN CATCH
         PRINT '==============================';
