@@ -1,3 +1,7 @@
+-- 📦 Data Warehouse Initialization Script
+-- This script sets up a multi-layered data warehouse with Bronze, Silver, and Gold schemas.
+-- Bronze layer tables ingest raw CRM and ERP data for downstream processing.
+
 -- 🎯 Create Data Warehouse and Schemas
 CREATE DATABASE DataWarehouse;
 USE DataWarehouse;
